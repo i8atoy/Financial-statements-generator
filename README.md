@@ -1,1 +1,1 @@
-# Financial-statements-generator
+# Financial statements generator
