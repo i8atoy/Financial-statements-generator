@@ -6,6 +6,8 @@ import org.springframework.web.client.RestClient;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -15,7 +17,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 
-
+import static java.lang.Float.max;
 
 
 @JacksonXmlRootElement(localName = "DataSet", namespace = "http://www.bnr.ro/xsd")
@@ -91,11 +93,11 @@ public class ExchangeRateClient {
             LocalDate currentDate = date;
 
             List<ExchangeRate> filteredRates = rates.stream()
-                    .filter(r -> r.currency.equalsIgnoreCase(currency))
-                    .map(r -> new ExchangeRate(
-                            r.currency,
+                    .filter(rate -> rate.currency.equalsIgnoreCase(currency))
+                    .map(rate -> new ExchangeRate(
+                            rate.currency,
                             currentDate,
-                            Float.parseFloat(r.value)
+                            Float.parseFloat(rate.value)
                     ))
                     .toList();
 
@@ -107,16 +109,24 @@ public class ExchangeRateClient {
         return exchangeRates;
     }
 
+    public Float computeCorrectExchangeRate(List<ExchangeRate> exchangeRates){
+        return exchangeRates.stream().
+                map(exchangeRate -> exchangeRate.rate()).
+                min(Float::compareTo).
+                orElse(0f);
+    }
 
-//    public static void main(String[] args) {
-//
-//        RestClient restClient = RestClient.builder().build();
-//        ExchangeRateClient client = new ExchangeRateClient(restClient);
-//
-//        LocalDate start = LocalDate.of(2026, 1, 13);
-//        LocalDate end = LocalDate.of(2026, 1, 15);
-//
-//        List<ExchangeRate> rates = client.getExchangeRateBetweenDates("EUR", start, end);
-//
-//    }
+
+    public static void main(String[] args) {
+
+        RestClient restClient = RestClient.builder().build();
+        ExchangeRateClient client = new ExchangeRateClient(restClient);
+
+        LocalDate start = LocalDate.of(2026, 1, 13);
+        LocalDate end = LocalDate.of(2026, 1, 15);
+
+        List<ExchangeRate> rates = client.getExchangeRateBetweenDates("EUR", start, end);
+        System.out.println(client.computeCorrectExchangeRate(rates));
+
+    }
 }
