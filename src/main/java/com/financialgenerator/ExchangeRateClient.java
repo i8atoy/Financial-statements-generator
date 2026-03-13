@@ -1,6 +1,7 @@
 package com.financialgenerator;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.cglib.core.Local;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
@@ -85,8 +86,19 @@ public class ExchangeRateClient {
     public List<ExchangeRate> getExchangeRateBetweenDates(String currency, LocalDate start, LocalDate end){
         BnrDataSet dataSet = restClient.get().uri("https://curs.bnr.ro/files/xml/years/nbrfxrates{year}.xml", start.getYear()).retrieve().body(BnrDataSet.class);
         List<ExchangeRate> exchangeRates = new ArrayList<>();
-        for (LocalDate date = start; date.isBefore(end.plusDays(1)); date = date.plusDays(1)) {
+        for (LocalDate date = end; date.isAfter(start.minusDays(1)); date = date.minusDays(1)) {
             BnrCube cube = dataSet.body().getCubeForDate(date);
+
+            LocalDate temp = date;
+            while(cube == null && temp.getYear() == date.getYear()){
+                temp = temp.minusDays(1);
+                cube = dataSet.body().getCubeForDate(temp);
+            }
+
+            if (cube == null){
+                continue;
+            }
+
 
             List<BnrRate> rates = cube.rates();
 
@@ -104,29 +116,27 @@ public class ExchangeRateClient {
             exchangeRates.addAll(filteredRates);
 
         }
-
         System.out.println(exchangeRates);
+
         return exchangeRates;
     }
-
-    public Float computeCorrectExchangeRate(List<ExchangeRate> exchangeRates){
-        return exchangeRates.stream().
-                map(exchangeRate -> exchangeRate.rate()).
-                min(Float::compareTo).
-                orElse(0f);
-    }
-
 
     public static void main(String[] args) {
 
         RestClient restClient = RestClient.builder().build();
         ExchangeRateClient client = new ExchangeRateClient(restClient);
 
-        LocalDate start = LocalDate.of(2026, 1, 13);
-        LocalDate end = LocalDate.of(2026, 1, 15);
+        LocalDate start = LocalDate.of(2026, 1, 6);
+        LocalDate end = LocalDate.of(2026, 1, 10);
 
-        List<ExchangeRate> rates = client.getExchangeRateBetweenDates("EUR", start, end);
-        System.out.println(client.computeCorrectExchangeRate(rates));
+
+
+        List<ExchangeRate> rates = client.getExchangeRateBetweenDates("USD", start, end);
+
+        System.out.println(rates.stream()
+                .min(Comparator.comparing(ExchangeRate::rate))
+                .map(ExchangeRate::date)
+                .orElse(null));
 
     }
 }
