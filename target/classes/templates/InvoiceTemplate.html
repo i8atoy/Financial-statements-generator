@@ -1,160 +1,153 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Invoice</title>
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <style>
+<head>
+    <meta charset="UTF-8" />
+    <title>Invoice</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
 
-            body, html{
-                height: 100%;
-                padding-left: 20px;
-                font-family: Roboto, sans-serif;
+        body, html{
+            height: 100%;
+            padding-left: 20px;
+            font-family: Roboto, sans-serif;
+        }
 
-            }
+        .header{
+            margin: 5rem 0;
+        }
 
-            .header{
-                margin: 5rem 0;
-            }
-            .details{
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                line-height: 20px;
-                font-size: 15px;
+        .details {
+            width: 100%;
+            overflow: hidden;
+            line-height: 20px;
+            font-size: 15px;
+        }
 
-            }
-            .left, .right{
-                display: flex;
-                flex-direction: column;
-            }
-            .right{
-                margin-left: 10rem;
-                width: 40%;
-            }
-            .left{
-                width: 50%;
-            }
-            .left ul,
-            .right ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
+        .left {
+            float: left;
+            width: 55%;
+        }
 
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 3em;
-                margin-bottom: 3em;
-            }
+        .right {
+            float: right;
+            width: 40%;
+        }
 
-            th {
-                text-align: right;
-                vertical-align: top;
-                padding: 0 16px;
-                font-weight: bold;
-                text-transform: uppercase;
-                font-size: 0.85em;
-                white-space: nowrap;
-            }
-            .total{
-                font-weight: bold;
-                text-transform: uppercase;
-                font-size: 0.85em;
-            }
+        .left ul,
+        .right ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-            td {
-                text-align: right;
-                vertical-align: top;
-                padding: 16px;
-            }
-            .description{
-                text-align: left;
-            }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 3em;
+            margin-bottom: 3em;
+        }
 
+        th {
+            text-align: right;
+            vertical-align: top;
+            padding: 0 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+        .total{
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.85em;
+        }
 
+        td {
+            text-align: right;
+            vertical-align: top;
+            padding: 16px;
+        }
+        .description{
+            text-align: left;
+        }
 
+    </style>
+</head>
 
-        </style>
-    </head>
+<body>
+<div class="header">
+    <h1 th:text="'INVOICE ' + ${invoiceNumber}"></h1>
+    <p class="date" th:text="${invoiceDate}"></p>
+</div>
 
+<div class="details">
+    <div class="left">
+        <ul>
+            <li><b>Provider:</b> EBITECH SRL</li>
+            <li><b>EU Tax ID:</b> 51066816</li>
+            <li><b>Address:</b> Str. Vidraru,
+                <br> Nr. 5‐7, Sc. 2, Et. 9, Ap. 125,
+                <br>Cluj‐Napoca, Cluj, Romania</li>
+            <li><b>Phone:</b> +40740977854</li>
+            <li><b>Bank Account Details:</b></li>
+            <li><b>IBAN:</b> RO23BTRLUSDCRT0691825501</li>
+            <li><b>SWIFT:</b> BTRLRO22XXX</li>
+            <li><b>Bank Name:</b> BANCA TRANSILVANIA S.A</li>
+        </ul>
+    </div>
 
+    <div class="right">
+        <ul>
+            <li><b>Client:</b> Loadbetter Inc</li>
+            <li><b>Company No.:</b> 854069156</li>
+            <li><b>Address:</b> 4101 Tremont Drive
+                <br>Indian Trail, NC, United States
+            </li>
+        </ul>
+    </div>
+</div>
 
-    <body>
-        <div class="header">
-            <h1 th:text="'INVOICE ' + ${invoiceNumber}"></h1>
-            <p class="date" th:text="${invoiceDate}"></p>
-        </div>
+<div class="transaction">
+    <table>
+        <tr class="table-header">
+            <th></th>
+            <th class="description">Description</th>
+            <th>Quantity</th>
+            <th>Unit Price <br>(USD)</th>
+            <th>Value <br>(USD)</th>
+            <th>Value <br>(RON)</th>
+        </tr>
 
-        <div class="details">
-            <div class="left">
-                <ul>
-                    <li><b>Provider:</b> EBITECH SRL</li>
-                    <li><b>EU Tax ID:</b> 51066816</li>
-                    <li><b>Address:</b> Str. Vidraru,
-                        <br> Nr. 5‐7, Sc. 2, Et. 9, Ap. 125,
-                        <br>Cluj‐Napoca, Cluj, Romania</li>
-                    <li><b>Phone:</b> +40740977854</li>
-                    <li><b>Bank Account Details:</b></li>
-                    <li><b>IBAN:</b> RO23BTRLUSDCRT0691825501</li>
-                    <li><b>SWIFT:</b> BTRLRO22XXX</li>
-                    <li><b>Bank Name:</b> BANCA TRANSILVANIA S.A</li>
-                </ul>
-            </div>
+        <tr>
+            <td>1.</td>
+            <td class="description"
+                th:text="'Software development for the month of ' + ${invoiceDate}">
+            </td>
 
-            <div class="right">
-                <ul>
-                    <li><b>Client:</b> Loadbetter Inc</li>
-                    <li><b>Company No.:</b> 854069156</li>
-                    <li><b>Address:</b> 4101 Tremont Drive
-                        <br>Indian Trail, NC, United States
-                    </li>
-                </ul>
-            </div>
-        </div>
+            <td th:text="${quantity}"></td>
+            <td th:text="'$' + ${unitPrice}"></td>
+            <td th:text="'$' + ${valueUsd}"></td>
+            <td th:text="${valueRon}"></td>
+        </tr>
 
-        <div class="transaction">
-            <table>
-                <tr class="table-header">
-                    <th></th>
-                    <th class="description">Description</th>
-                    <th>Quantity</th>
-                    <th>Unit Price <br>(USD)</th>
-                    <th>Value <br>(USD)</th>
-                    <th>Value <br>(RON)</th>
-                </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
 
-                <tr>
-                    <td>1.</td>
-                    <td class="description"
-                        th:text="'Software development for the month of ' + ${invoiceDate}">
-                    </td>
+            <td class="total">Total</td>
 
-                    <td th:text="${quantity}"></td>
-                    <td th:text="'$' + ${unitPrice}"></td>
-                    <td th:text="'$' + ${valueUsd}"></td>
-                    <td th:text="${valueRon}"></td>
-                </tr>
+            <td th:text="'$' + ${totalUsd}"></td>
+            <td th:text="${totalRon}"></td>
+        </tr>
 
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-
-                    <td class="total">Total</td>
-
-                    <td th:text="'$' + ${totalUsd}"></td>
-                    <td th:text="${totalRon}"></td>
-                </tr>
-
-            </table>
-        </div>
-        <div class="footing">
-            <p>
-                <i th:text="'*$1 = ' + ${exchangeRate} + ' RON as of ' + ${exchangeDate}"></i>
-            </p>
-            <p><i>**VAT exempt according to Article 278, Section 2 of Romanian Fiscal Code</i></p>
-        </div>
-    </body>
+    </table>
+</div>
+<div class="footing">
+    <p>
+        <i th:text="'*$1 = ' + ${exchangeRate} + ' RON as of ' + ${exchangeDate}"></i>
+    </p>
+    <p><i>**VAT exempt according to Article 278, Section 2 of Romanian Fiscal Code</i></p>
+</div>
+</body>
 </html>
