@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.mail.MailSender;
 
 import java.io.IOException;
 
@@ -17,6 +18,9 @@ public class FinancialGeneratorApplication {
     @Autowired
     private MailReceiver mailReceiver;
 
+    @Autowired
+    private MailSenderService mailSenderService;
+
     public static void main(String[] args) {
         SpringApplication.run(FinancialGeneratorApplication.class, args);
     }
@@ -24,10 +28,10 @@ public class FinancialGeneratorApplication {
     @EventListener(ApplicationReadyEvent.class)
     public void executeStartupTasks() {
         try {
+            mailSenderService.sendEmail("p.elvinpop@proton.me", "pdf", "here is the pdf");
+//            mailReceiver.readEmails();
 
-            mailReceiver.readEmails();
-
-        } catch (MailReceiverException | MessagingException | IOException e) {
+        } catch (MailReceiverException | MessagingException e) {
             System.err.println("An error occurred while checking emails: " + e.getMessage());
             e.printStackTrace();
         }
